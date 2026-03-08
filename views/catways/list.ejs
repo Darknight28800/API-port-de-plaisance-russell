@@ -1,0 +1,37 @@
+<h1>Liste des Catways</h1>
+
+<a href="/catways/create">Créer un Catway</a>
+
+<table border="1">
+
+<tr>
+<th>Numéro</th>
+<th>Type</th>
+<th>Etat</th>
+<th>Actions</th>
+</tr>
+
+<% catways.forEach(catway => { %>
+
+<tr>
+<td><%= catway.catwayNumber %></td>
+<td><%= catway.catwayType %></td>
+<td><%= catway.catwayState %></td>
+
+<td>
+
+<a href="/catways/edit/<%= catway.catwayNumber %>">Modifier</a>
+
+<form action="/catways/delete/<%= catway.catwayNumber %>" method="POST" style="display:inline;">
+<button>Supprimer</button>
+</form>
+
+</td>
+
+</tr>
+
+<% }) %>
+
+</table>
+
+<a href="/dashboard">Retour Tableau de bord</a>

@@ -1,0 +1,30 @@
+<h1>Créer un Catway</h1>
+
+<form action="/catways/create" method="POST">
+
+<label>Numéro</label>
+<input type="number" name="catwayNumber" required>
+
+<br><br>
+
+<label>Type</label>
+
+<select name="catwayType">
+<option value="short">short</option>
+<option value="long">long</option>
+</select>
+
+<br><br>
+
+<label>Etat</label>
+<input type="text" name="catwayState" required>
+
+<br><br>
+
+<button type="submit">Créer</button>
+
+</form>
+
+<br>
+
+<a href="/catways">Retour</a>

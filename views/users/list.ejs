@@ -1,0 +1,36 @@
+<h1>Utilisateurs</h1>
+
+<a href="/users/create">Créer utilisateur</a>
+
+<table border="1">
+
+<tr>
+<th>Username</th>
+<th>Email</th>
+<th>Actions</th>
+</tr>
+
+<% users.forEach(user => { %>
+
+<tr>
+
+<td><%= user.username %></td>
+<td><%= user.email %></td>
+
+<td>
+
+<a href="/users/edit/<%= user.email %>">Modifier</a>
+
+<form action="/users/delete/<%= user.email %>" method="POST">
+<button>Supprimer</button>
+</form>
+
+</td>
+
+</tr>
+
+<% }) %>
+
+</table>
+
+<a href="/dashboard">Retour Tableau de bord</a>
