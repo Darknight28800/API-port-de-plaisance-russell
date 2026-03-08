@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tableau de bord</title>
+</head>
+
+<body>
+
+<h1>Tableau de bord</h1>
+
+<p>Utilisateur : <%= user.email %></p>
+<p>Date : <%= date %></p>
+
+<hr>
+
+<a href="/catways">Gérer les Catways</a>
+<br>
+<a href="/users">Gérer les Utilisateurs</a>
+<br>
+<a href="/reservations">Gérer les Réservations</a>
+<br>
+<a href="/api-docs">Documentation API</a>
+<br>
+<a href="/logout">Déconnexion</a>
+
+<hr>
+
+<h2>Réservations en cours</h2>
+
+<table border="1">
+
+<tr>
+<th>Client</th>
+<th>Bateau</th>
+<th>Catway</th>
+<th>Début</th>
+<th>Fin</th>
+</tr>
+
+<% reservations.forEach(reservation => { %>
+
+<tr>
+<td><%= reservation.clientName %></td>
+<td><%= reservation.boatName %></td>
+<td><%= reservation.catwayNumber %></td>
+<td><%= reservation.startDate.toDateString() %></td>
+<td><%= reservation.endDate.toDateString() %></td>
+</tr>
+
+<% }) %>
+
+</table>
+
+</body>
+</html>
