@@ -1,6 +1,5 @@
 const express = require('express')
 const cookieParser = require('cookie-parser')
-const connectDB = require('./config/db')
 
 const catwaysRoutes = require('./routes/catways.routes')
 const reservationsRoutes = require('./routes/reservations.routes')
@@ -12,8 +11,6 @@ const swaggerUi = require('swagger-ui-express')
 const swaggerSpec = require('./config/swagger')
 
 const app = express()
-
-connectDB()
 
 app.set('view engine', 'ejs')
 
