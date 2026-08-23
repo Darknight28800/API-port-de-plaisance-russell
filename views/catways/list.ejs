@@ -1,37 +1,72 @@
-<h1>Liste des Catways</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Catways - Port de Plaisance Russell</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
 
-<a href="/catways/create">Créer un Catway</a>
+<%- include('../partials/nav') %>
 
-<table border="1">
+<div class="container">
+    <div class="card">
+        <div class="actions" style="justify-content: space-between; margin-bottom: 1rem;">
+            <h2 style="margin:0;">Catways</h2>
+            <a href="/dashboard/catways/create" class="btn">+ Nouveau catway</a>
+        </div>
 
-<tr>
-<th>Numéro</th>
-<th>Type</th>
-<th>Etat</th>
-<th>Actions</th>
-</tr>
+        <div id="error" class="alert error" style="display:none;"></div>
 
-<% catways.forEach(catway => { %>
+        <table>
+            <thead>
+                <tr><th>Numéro</th><th>Type</th><th>État</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                <% catways.forEach((catway) => { %>
+                <tr data-number="<%= catway.catwayNumber %>">
+                    <td><%= catway.catwayNumber %></td>
+                    <td><%= catway.catwayType %></td>
+                    <td><%= catway.catwayState %></td>
+                    <td class="actions">
+                        <a href="/dashboard/catways/<%= catway.catwayNumber %>/edit">Modifier</a>
+                        <button class="btn danger btn-delete" data-number="<%= catway.catwayNumber %>">Supprimer</button>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <% if (catways.length === 0) { %>
+            <p class="muted">Aucun catway pour le moment.</p>
+        <% } %>
+    </div>
+</div>
 
-<tr>
-<td><%= catway.catwayNumber %></td>
-<td><%= catway.catwayType %></td>
-<td><%= catway.catwayState %></td>
+<script>
+document.querySelectorAll('.btn-delete').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+        const number = btn.dataset.number
 
-<td>
+        if (!confirm(`Supprimer le catway n°${number} ?`)) return
 
-<a href="/catways/edit/<%= catway.catwayNumber %>">Modifier</a>
+        try {
+            const response = await fetch(`/catways/${number}`, { method: 'DELETE' })
+            const data = await response.json()
 
-<form action="/catways/delete/<%= catway.catwayNumber %>" method="POST" style="display:inline;">
-<button>Supprimer</button>
-</form>
+            if (!response.ok) {
+                document.getElementById('error').textContent = data.message
+                document.getElementById('error').style.display = 'block'
+                return
+            }
 
-</td>
+            document.querySelector(`tr[data-number="${number}"]`).remove()
+        } catch (err) {
+            document.getElementById('error').textContent = 'Erreur réseau.'
+            document.getElementById('error').style.display = 'block'
+        }
+    })
+})
+</script>
 
-</tr>
-
-<% }) %>
-
-</table>
-
-<a href="/dashboard">Retour Tableau de bord</a>
+</body>
+</html>

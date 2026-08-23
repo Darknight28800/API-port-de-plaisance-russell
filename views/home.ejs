@@ -1,38 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>Port de plaisance Russell</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Port de Plaisance Russell</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-
 <body>
 
-<h1>Port de plaisance Russell</h1>
+<div class="container">
 
-<p>Bienvenue sur l'application de gestion des catways et des réservations.</p>
+    <div class="hero">
+        <h1>⚓ Port de Plaisance Russell</h1>
+        <p>
+            Application de gestion des catways et des réservations pour la capitainerie
+            du port de plaisance de Russell : suivi des emplacements d'amarrage,
+            des réservations et des comptes utilisateurs.
+        </p>
+    </div>
 
-<h2>Connexion</h2>
+    <div class="card login-card">
+        <h2>Connexion</h2>
 
-<form action="/login" method="POST">
+        <div id="login-error" class="alert error" style="display:none;"></div>
+        <% if (error) { %>
+            <div class="alert error"><%= error %></div>
+        <% } %>
 
-<label>Email</label>
-<br>
-<input type="email" name="email" required>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn">Se connecter</button>
+        </form>
 
-<br><br>
+        <p class="muted" style="margin-top:1rem;">
+            <a href="/api-docs" target="_blank">Consulter la documentation de l'API</a>
+        </p>
+    </div>
 
-<label>Mot de passe</label>
-<br>
-<input type="password" name="password" required>
+</div>
 
-<br><br>
+<script>
+document.getElementById('login-form').addEventListener('submit', async (event) => {
+    event.preventDefault()
 
-<button type="submit">Se connecter</button>
+    const errorBox = document.getElementById('login-error')
+    errorBox.style.display = 'none'
 
-</form>
+    const email = document.getElementById('email').value
+    const password = document.getElementById('password').value
 
-<br>
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ email, password })
+        })
 
-<a href="/api-docs">Documentation API</a>
+        const data = await response.json()
+
+        if (!response.ok) {
+            const message = data.errors ? data.errors.map(e => e.message).join(' ') : data.message
+            errorBox.textContent = message || 'Connexion impossible'
+            errorBox.style.display = 'block'
+            return
+        }
+
+        window.location.href = '/dashboard'
+
+    } catch (err) {
+        errorBox.textContent = 'Erreur réseau, veuillez réessayer.'
+        errorBox.style.display = 'block'
+    }
+})
+</script>
 
 </body>
 </html>

@@ -1,36 +1,71 @@
-<h1>Utilisateurs</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Utilisateurs - Port de Plaisance Russell</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
 
-<a href="/users/create">Créer utilisateur</a>
+<%- include('../partials/nav') %>
 
-<table border="1">
+<div class="container">
+    <div class="card">
+        <div class="actions" style="justify-content: space-between; margin-bottom: 1rem;">
+            <h2 style="margin:0;">Utilisateurs</h2>
+            <a href="/dashboard/users/create" class="btn">+ Nouvel utilisateur</a>
+        </div>
 
-<tr>
-<th>Username</th>
-<th>Email</th>
-<th>Actions</th>
-</tr>
+        <div id="error" class="alert error" style="display:none;"></div>
 
-<% users.forEach(user => { %>
+        <table>
+            <thead>
+                <tr><th>Nom</th><th>Email</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                <% users.forEach((u) => { %>
+                <tr data-email="<%= u.email %>">
+                    <td><%= u.username %></td>
+                    <td><%= u.email %></td>
+                    <td class="actions">
+                        <a href="/dashboard/users/<%= u.email %>/edit">Modifier</a>
+                        <button class="btn danger btn-delete" data-email="<%= u.email %>">Supprimer</button>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <% if (users.length === 0) { %>
+            <p class="muted">Aucun utilisateur pour le moment.</p>
+        <% } %>
+    </div>
+</div>
 
-<tr>
+<script>
+document.querySelectorAll('.btn-delete').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+        const email = btn.dataset.email
 
-<td><%= user.username %></td>
-<td><%= user.email %></td>
+        if (!confirm(`Supprimer l'utilisateur ${email} ?`)) return
 
-<td>
+        try {
+            const response = await fetch(`/users/${encodeURIComponent(email)}`, { method: 'DELETE' })
+            const data = await response.json()
 
-<a href="/users/edit/<%= user.email %>">Modifier</a>
+            if (!response.ok) {
+                document.getElementById('error').textContent = data.message
+                document.getElementById('error').style.display = 'block'
+                return
+            }
 
-<form action="/users/delete/<%= user.email %>" method="POST">
-<button>Supprimer</button>
-</form>
+            document.querySelector(`tr[data-email="${email}"]`).remove()
+        } catch (err) {
+            document.getElementById('error').textContent = 'Erreur réseau.'
+            document.getElementById('error').style.display = 'block'
+        }
+    })
+})
+</script>
 
-</td>
-
-</tr>
-
-<% }) %>
-
-</table>
-
-<a href="/dashboard">Retour Tableau de bord</a>
+</body>
+</html>

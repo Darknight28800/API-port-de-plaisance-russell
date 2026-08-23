@@ -1,27 +1,74 @@
-<h1>Réservations</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Réservations - Port de Plaisance Russell</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
 
-<a href="/dashboard">Retour Tableau de bord</a>
+<%- include('../partials/nav') %>
 
-<table border="1">
+<div class="container">
+    <div class="card">
+        <div class="actions" style="justify-content: space-between; margin-bottom: 1rem;">
+            <h2 style="margin:0;">Réservations</h2>
+            <a href="/dashboard/reservations/create" class="btn">+ Nouvelle réservation</a>
+        </div>
 
-<tr>
-<th>Client</th>
-<th>Bateau</th>
-<th>Catway</th>
-<th>Début</th>
-<th>Fin</th>
-</tr>
+        <div id="error" class="alert error" style="display:none;"></div>
 
-<% reservations.forEach(reservation => { %>
+        <table>
+            <thead>
+                <tr><th>Client</th><th>Bateau</th><th>Catway</th><th>Début</th><th>Fin</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                <% reservations.forEach((r) => { %>
+                <tr data-id="<%= r._id %>">
+                    <td><%= r.clientName %></td>
+                    <td><%= r.boatName %></td>
+                    <td><%= r.catwayNumber %></td>
+                    <td><%= new Date(r.startDate).toLocaleDateString('fr-FR') %></td>
+                    <td><%= new Date(r.endDate).toLocaleDateString('fr-FR') %></td>
+                    <td class="actions">
+                        <a href="/dashboard/reservations/<%= r.catwayNumber %>/<%= r._id %>/edit">Modifier</a>
+                        <button class="btn danger btn-delete" data-catway="<%= r.catwayNumber %>" data-id="<%= r._id %>">Supprimer</button>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <% if (reservations.length === 0) { %>
+            <p class="muted">Aucune réservation pour le moment.</p>
+        <% } %>
+    </div>
+</div>
 
-<tr>
-<td><%= reservation.clientName %></td>
-<td><%= reservation.boatName %></td>
-<td><%= reservation.catwayNumber %></td>
-<td><%= new Date(reservation.startDate).toLocaleDateString() %></td>
-<td><%= new Date(reservation.endDate).toLocaleDateString() %></td>
-</tr>
+<script>
+document.querySelectorAll('.btn-delete').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+        const { catway, id } = btn.dataset
 
-<% }) %>
+        if (!confirm('Supprimer cette réservation ?')) return
 
-</table>
+        try {
+            const response = await fetch(`/catways/${catway}/reservations/${id}`, { method: 'DELETE' })
+            const data = await response.json()
+
+            if (!response.ok) {
+                document.getElementById('error').textContent = data.message
+                document.getElementById('error').style.display = 'block'
+                return
+            }
+
+            document.querySelector(`tr[data-id="${id}"]`).remove()
+        } catch (err) {
+            document.getElementById('error').textContent = 'Erreur réseau.'
+            document.getElementById('error').style.display = 'block'
+        }
+    })
+})
+</script>
+
+</body>
+</html>

@@ -1,15 +1,70 @@
-<h1>Modifier Catway</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier catway - Port de Plaisance Russell</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
 
-<form action="/catways/edit/<%= catway.catwayNumber %>" method="POST">
+<%- include('../partials/nav') %>
 
-<label>Etat</label>
+<div class="container">
+    <div class="card" style="max-width: 480px;">
+        <h2>Modifier le catway n°<%= catway.catwayNumber %></h2>
 
-<input type="text" name="catwayState" value="<%= catway.catwayState %>">
+        <div id="error" class="alert error" style="display:none;"></div>
 
-<br><br>
+        <form id="catway-form">
+            <div class="form-group">
+                <label>Numéro</label>
+                <input type="text" value="<%= catway.catwayNumber %>" disabled>
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <input type="text" value="<%= catway.catwayType %>" disabled>
+            </div>
+            <div class="form-group">
+                <label for="catwayState">État</label>
+                <input type="text" id="catwayState" name="catwayState" value="<%= catway.catwayState %>" required>
+            </div>
+            <button type="submit" class="btn">Enregistrer</button>
+            <a href="/dashboard/catways" class="btn secondary">Annuler</a>
+        </form>
+    </div>
+</div>
 
-<button type="submit">Modifier</button>
+<script>
+document.getElementById('catway-form').addEventListener('submit', async (event) => {
+    event.preventDefault()
 
-</form>
+    const errorBox = document.getElementById('error')
+    errorBox.style.display = 'none'
 
-<a href="/catways">Retour</a>
+    try {
+        const response = await fetch('/catways/<%= catway.catwayNumber %>', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ catwayState: document.getElementById('catwayState').value })
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+            const message = data.errors ? data.errors.map(e => e.message).join(' ') : data.message
+            errorBox.textContent = message
+            errorBox.style.display = 'block'
+            return
+        }
+
+        window.location.href = '/dashboard/catways'
+
+    } catch (err) {
+        errorBox.textContent = 'Erreur réseau.'
+        errorBox.style.display = 'block'
+    }
+})
+</script>
+
+</body>
+</html>

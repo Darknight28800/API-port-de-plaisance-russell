@@ -1,55 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-<title>Tableau de bord</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord - Port de Plaisance Russell</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-
 <body>
 
-<h1>Tableau de bord</h1>
+<%- include('partials/nav') %>
 
-<p>Utilisateur : <%= user.email %></p>
-<p>Date : <%= date %></p>
+<div class="container">
 
-<hr>
+    <div class="card">
+        <h2>Tableau de bord</h2>
+        <div class="summary">
+            <span>👤 <strong><%= user.username %></strong> (<%= user.email %>)</span>
+            <span>📅 <%= date %></span>
+        </div>
+    </div>
 
-<a href="/catways">Gérer les Catways</a>
-<br>
-<a href="/users">Gérer les Utilisateurs</a>
-<br>
-<a href="/reservations">Gérer les Réservations</a>
-<br>
-<a href="/api-docs">Documentation API</a>
-<br>
-<a href="/logout">Déconnexion</a>
+    <div class="card">
+        <h3>Réservations en cours</h3>
+        <div id="reservations-container">
+            <p class="muted">Chargement…</p>
+        </div>
+    </div>
 
-<hr>
+</div>
 
-<h2>Réservations en cours</h2>
+<script>
+// Les données du tableau de bord proviennent d'un appel asynchrone à l'API REST.
+async function loadCurrentReservations() {
+    const container = document.getElementById('reservations-container')
 
-<table border="1">
+    try {
+        const response = await fetch('/reservations', { headers: { Accept: 'application/json' } })
 
-<tr>
-<th>Client</th>
-<th>Bateau</th>
-<th>Catway</th>
-<th>Début</th>
-<th>Fin</th>
-</tr>
+        if (!response.ok) {
+            container.innerHTML = '<p class="alert error">Impossible de charger les réservations.</p>'
+            return
+        }
 
-<% reservations.forEach(reservation => { %>
+        const reservations = await response.json()
+        const now = new Date()
 
-<tr>
-<td><%= reservation.clientName %></td>
-<td><%= reservation.boatName %></td>
-<td><%= reservation.catwayNumber %></td>
-<td><%= reservation.startDate.toDateString() %></td>
-<td><%= reservation.endDate.toDateString() %></td>
-</tr>
+        const current = reservations.filter((r) => new Date(r.startDate) <= now && new Date(r.endDate) >= now)
 
-<% }) %>
+        if (current.length === 0) {
+            container.innerHTML = '<p class="muted">Aucune réservation en cours actuellement.</p>'
+            return
+        }
 
-</table>
+        const rows = current.map((r) => `
+            <tr>
+                <td>${r.clientName}</td>
+                <td>${r.boatName}</td>
+                <td>${r.catwayNumber}</td>
+                <td>${new Date(r.startDate).toLocaleDateString('fr-FR')}</td>
+                <td>${new Date(r.endDate).toLocaleDateString('fr-FR')}</td>
+            </tr>
+        `).join('')
+
+        container.innerHTML = `
+            <table>
+                <thead>
+                    <tr><th>Client</th><th>Bateau</th><th>Catway</th><th>Début</th><th>Fin</th></tr>
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>
+        `
+
+    } catch (err) {
+        container.innerHTML = '<p class="alert error">Erreur réseau lors du chargement des réservations.</p>'
+    }
+}
+
+loadCurrentReservations()
+</script>
 
 </body>
 </html>

@@ -1,30 +1,79 @@
-<h1>Créer un Catway</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Nouveau catway - Port de Plaisance Russell</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
 
-<form action="/catways/create" method="POST">
+<%- include('../partials/nav') %>
 
-<label>Numéro</label>
-<input type="number" name="catwayNumber" required>
+<div class="container">
+    <div class="card" style="max-width: 480px;">
+        <h2>Nouveau catway</h2>
 
-<br><br>
+        <div id="error" class="alert error" style="display:none;"></div>
 
-<label>Type</label>
+        <form id="catway-form">
+            <div class="form-group">
+                <label for="catwayNumber">Numéro</label>
+                <input type="number" id="catwayNumber" name="catwayNumber" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="catwayType">Type</label>
+                <select id="catwayType" name="catwayType" required>
+                    <option value="short">short</option>
+                    <option value="long">long</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="catwayState">État</label>
+                <input type="text" id="catwayState" name="catwayState" required>
+            </div>
+            <button type="submit" class="btn">Créer</button>
+            <a href="/dashboard/catways" class="btn secondary">Annuler</a>
+        </form>
+    </div>
+</div>
 
-<select name="catwayType">
-<option value="short">short</option>
-<option value="long">long</option>
-</select>
+<script>
+document.getElementById('catway-form').addEventListener('submit', async (event) => {
+    event.preventDefault()
 
-<br><br>
+    const errorBox = document.getElementById('error')
+    errorBox.style.display = 'none'
 
-<label>Etat</label>
-<input type="text" name="catwayState" required>
+    const payload = {
+        catwayNumber: document.getElementById('catwayNumber').value,
+        catwayType: document.getElementById('catwayType').value,
+        catwayState: document.getElementById('catwayState').value
+    }
 
-<br><br>
+    try {
+        const response = await fetch('/catways', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
 
-<button type="submit">Créer</button>
+        const data = await response.json()
 
-</form>
+        if (!response.ok) {
+            const message = data.errors ? data.errors.map(e => e.message).join(' ') : data.message
+            errorBox.textContent = message
+            errorBox.style.display = 'block'
+            return
+        }
 
-<br>
+        window.location.href = '/dashboard/catways'
 
-<a href="/catways">Retour</a>
+    } catch (err) {
+        errorBox.textContent = 'Erreur réseau.'
+        errorBox.style.display = 'block'
+    }
+})
+</script>
+
+</body>
+</html>

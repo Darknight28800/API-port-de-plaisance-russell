@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Nouvel utilisateur - Port de Plaisance Russell</title>
+    <title>Modifier utilisateur - Port de Plaisance Russell</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -11,24 +11,24 @@
 
 <div class="container">
     <div class="card" style="max-width: 480px;">
-        <h2>Nouvel utilisateur</h2>
+        <h2>Modifier l'utilisateur</h2>
 
         <div id="error" class="alert error" style="display:none;"></div>
 
         <form id="user-form">
             <div class="form-group">
                 <label for="username">Nom d'utilisateur</label>
-                <input type="text" id="username" name="username" required minlength="2">
+                <input type="text" id="username" name="username" value="<%= user.username %>" required minlength="2">
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" value="<%= user.email %>" required>
             </div>
             <div class="form-group">
-                <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" required minlength="6">
+                <label for="password">Nouveau mot de passe <span class="muted">(laisser vide pour ne pas changer)</span></label>
+                <input type="password" id="password" name="password" minlength="6">
             </div>
-            <button type="submit" class="btn">Créer</button>
+            <button type="submit" class="btn">Enregistrer</button>
             <a href="/dashboard/users" class="btn secondary">Annuler</a>
         </form>
     </div>
@@ -43,13 +43,15 @@ document.getElementById('user-form').addEventListener('submit', async (event) =>
 
     const payload = {
         username: document.getElementById('username').value,
-        email: document.getElementById('email').value,
-        password: document.getElementById('password').value
+        email: document.getElementById('email').value
     }
 
+    const password = document.getElementById('password').value
+    if (password) payload.password = password
+
     try {
-        const response = await fetch('/users', {
-            method: 'POST',
+        const response = await fetch('/users/<%= user.email %>', {
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         })

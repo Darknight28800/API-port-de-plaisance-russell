@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Nouvelle réservation - Port de Plaisance Russell</title>
+    <title>Modifier réservation - Port de Plaisance Russell</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -11,36 +11,32 @@
 
 <div class="container">
     <div class="card" style="max-width: 480px;">
-        <h2>Nouvelle réservation</h2>
+        <h2>Modifier la réservation</h2>
 
         <div id="error" class="alert error" style="display:none;"></div>
 
         <form id="reservation-form">
             <div class="form-group">
-                <label for="catwayNumber">Catway</label>
-                <select id="catwayNumber" name="catwayNumber" required>
-                    <% catways.forEach((c) => { %>
-                        <option value="<%= c.catwayNumber %>"><%= c.catwayNumber %> (<%= c.catwayType %>)</option>
-                    <% }) %>
-                </select>
+                <label>Catway</label>
+                <input type="text" value="<%= reservation.catwayNumber %>" disabled>
             </div>
             <div class="form-group">
                 <label for="clientName">Client</label>
-                <input type="text" id="clientName" name="clientName" required>
+                <input type="text" id="clientName" name="clientName" value="<%= reservation.clientName %>" required>
             </div>
             <div class="form-group">
                 <label for="boatName">Bateau</label>
-                <input type="text" id="boatName" name="boatName" required>
+                <input type="text" id="boatName" name="boatName" value="<%= reservation.boatName %>" required>
             </div>
             <div class="form-group">
                 <label for="startDate">Date de début</label>
-                <input type="date" id="startDate" name="startDate" required>
+                <input type="date" id="startDate" name="startDate" value="<%= new Date(reservation.startDate).toISOString().slice(0,10) %>" required>
             </div>
             <div class="form-group">
                 <label for="endDate">Date de fin</label>
-                <input type="date" id="endDate" name="endDate" required>
+                <input type="date" id="endDate" name="endDate" value="<%= new Date(reservation.endDate).toISOString().slice(0,10) %>" required>
             </div>
-            <button type="submit" class="btn">Créer</button>
+            <button type="submit" class="btn">Enregistrer</button>
             <a href="/dashboard/reservations" class="btn secondary">Annuler</a>
         </form>
     </div>
@@ -53,10 +49,8 @@ document.getElementById('reservation-form').addEventListener('submit', async (ev
     const errorBox = document.getElementById('error')
     errorBox.style.display = 'none'
 
-    const catwayNumber = document.getElementById('catwayNumber').value
-
     const payload = {
-        catwayNumber,
+        catwayNumber: <%= reservation.catwayNumber %>,
         clientName: document.getElementById('clientName').value,
         boatName: document.getElementById('boatName').value,
         startDate: document.getElementById('startDate').value,
@@ -64,8 +58,8 @@ document.getElementById('reservation-form').addEventListener('submit', async (ev
     }
 
     try {
-        const response = await fetch(`/catways/${catwayNumber}/reservations`, {
-            method: 'POST',
+        const response = await fetch('/catways/<%= reservation.catwayNumber %>/reservations/<%= reservation._id %>', {
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         })
