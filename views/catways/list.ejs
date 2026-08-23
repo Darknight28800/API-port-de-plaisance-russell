@@ -1,43 +1,44 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Catways - Port de Plaisance Russell</title>
-    <link rel="stylesheet" href="/css/style.css">
+<%- include('../partials/head', {title: 'Catways'}) %>
 </head>
 <body>
 
-<%- include('../partials/nav') %>
+<%- include('../partials/nav', {active: 'catways'}) %>
 
 <div class="container">
     <div class="card">
-        <div class="actions" style="justify-content: space-between; margin-bottom: 1rem;">
+        <div class="actions" style="justify-content: space-between; margin-bottom: 1.25rem;">
             <h2 style="margin:0;">Catways</h2>
             <a href="/dashboard/catways/create" class="btn">+ Nouveau catway</a>
         </div>
 
         <div id="error" class="alert error" style="display:none;"></div>
 
-        <table>
-            <thead>
-                <tr><th>Numéro</th><th>Type</th><th>État</th><th>Actions</th></tr>
-            </thead>
-            <tbody>
-                <% catways.forEach((catway) => { %>
-                <tr data-number="<%= catway.catwayNumber %>">
-                    <td><%= catway.catwayNumber %></td>
-                    <td><%= catway.catwayType %></td>
-                    <td><%= catway.catwayState %></td>
-                    <td class="actions">
-                        <a href="/dashboard/catways/<%= catway.catwayNumber %>/edit">Modifier</a>
-                        <button class="btn danger btn-delete" data-number="<%= catway.catwayNumber %>">Supprimer</button>
-                    </td>
-                </tr>
-                <% }) %>
-            </tbody>
-        </table>
         <% if (catways.length === 0) { %>
-            <p class="muted">Aucun catway pour le moment.</p>
+            <p class="empty-state">⚓ Aucun catway pour le moment.</p>
+        <% } else { %>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Numéro</th><th>Type</th><th>État</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <% catways.forEach((catway) => { %>
+                    <tr data-number="<%= catway.catwayNumber %>">
+                        <td><strong>#<%= catway.catwayNumber %></strong></td>
+                        <td><span class="badge badge-<%= catway.catwayType %>"><%= catway.catwayType %></span></td>
+                        <td><%= catway.catwayState %></td>
+                        <td class="actions">
+                            <a href="/dashboard/catways/<%= catway.catwayNumber %>/edit">Modifier</a>
+                            <button class="btn danger btn-delete" data-number="<%= catway.catwayNumber %>">Supprimer</button>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
         <% } %>
     </div>
 </div>

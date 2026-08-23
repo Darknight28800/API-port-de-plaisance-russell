@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Nouvel utilisateur - Port de Plaisance Russell</title>
-    <link rel="stylesheet" href="/css/style.css">
+<%- include('../partials/head', {title: 'Nouvel utilisateur'}) %>
 </head>
 <body>
 
-<%- include('../partials/nav') %>
+<%- include('../partials/nav', {active: 'users'}) %>
 
 <div class="container">
     <div class="card" style="max-width: 480px;">

@@ -1,42 +1,43 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Utilisateurs - Port de Plaisance Russell</title>
-    <link rel="stylesheet" href="/css/style.css">
+<%- include('../partials/head', {title: 'Utilisateurs'}) %>
 </head>
 <body>
 
-<%- include('../partials/nav') %>
+<%- include('../partials/nav', {active: 'users'}) %>
 
 <div class="container">
     <div class="card">
-        <div class="actions" style="justify-content: space-between; margin-bottom: 1rem;">
+        <div class="actions" style="justify-content: space-between; margin-bottom: 1.25rem;">
             <h2 style="margin:0;">Utilisateurs</h2>
             <a href="/dashboard/users/create" class="btn">+ Nouvel utilisateur</a>
         </div>
 
         <div id="error" class="alert error" style="display:none;"></div>
 
-        <table>
-            <thead>
-                <tr><th>Nom</th><th>Email</th><th>Actions</th></tr>
-            </thead>
-            <tbody>
-                <% users.forEach((u) => { %>
-                <tr data-email="<%= u.email %>">
-                    <td><%= u.username %></td>
-                    <td><%= u.email %></td>
-                    <td class="actions">
-                        <a href="/dashboard/users/<%= u.email %>/edit">Modifier</a>
-                        <button class="btn danger btn-delete" data-email="<%= u.email %>">Supprimer</button>
-                    </td>
-                </tr>
-                <% }) %>
-            </tbody>
-        </table>
         <% if (users.length === 0) { %>
-            <p class="muted">Aucun utilisateur pour le moment.</p>
+            <p class="empty-state">👤 Aucun utilisateur pour le moment.</p>
+        <% } else { %>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Nom</th><th>Email</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <% users.forEach((u) => { %>
+                    <tr data-email="<%= u.email %>">
+                        <td><%= u.username %></td>
+                        <td><%= u.email %></td>
+                        <td class="actions">
+                            <a href="/dashboard/users/<%= u.email %>/edit">Modifier</a>
+                            <button class="btn danger btn-delete" data-email="<%= u.email %>">Supprimer</button>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
         <% } %>
     </div>
 </div>

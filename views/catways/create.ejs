@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Nouveau catway - Port de Plaisance Russell</title>
-    <link rel="stylesheet" href="/css/style.css">
+<%- include('../partials/head', {title: 'Nouveau catway'}) %>
 </head>
 <body>
 
-<%- include('../partials/nav') %>
+<%- include('../partials/nav', {active: 'catways'}) %>
 
 <div class="container">
     <div class="card" style="max-width: 480px;">

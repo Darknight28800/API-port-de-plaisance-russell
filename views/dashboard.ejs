@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de bord - Port de Plaisance Russell</title>
-    <link rel="stylesheet" href="/css/style.css">
+<%- include('partials/head', {title: 'Tableau de bord'}) %>
 </head>
 <body>
 
-<%- include('partials/nav') %>
+<%- include('partials/nav', {active: 'dashboard'}) %>
 
 <div class="container">
 
     <div class="card">
         <h2>Tableau de bord</h2>
         <div class="summary">
-            <span>👤 <strong><%= user.username %></strong> (<%= user.email %>)</span>
+            <span>👤 <%= user.username %> · <%= user.email %></span>
             <span>📅 <%= date %></span>
         </div>
     </div>
@@ -48,7 +45,7 @@ async function loadCurrentReservations() {
         const current = reservations.filter((r) => new Date(r.startDate) <= now && new Date(r.endDate) >= now)
 
         if (current.length === 0) {
-            container.innerHTML = '<p class="muted">Aucune réservation en cours actuellement.</p>'
+            container.innerHTML = '<p class="empty-state">⛵ Aucune réservation en cours actuellement.</p>'
             return
         }
 
@@ -56,19 +53,21 @@ async function loadCurrentReservations() {
             <tr>
                 <td>${r.clientName}</td>
                 <td>${r.boatName}</td>
-                <td>${r.catwayNumber}</td>
+                <td><span class="badge badge-long">#${r.catwayNumber}</span></td>
                 <td>${new Date(r.startDate).toLocaleDateString('fr-FR')}</td>
                 <td>${new Date(r.endDate).toLocaleDateString('fr-FR')}</td>
             </tr>
         `).join('')
 
         container.innerHTML = `
-            <table>
-                <thead>
-                    <tr><th>Client</th><th>Bateau</th><th>Catway</th><th>Début</th><th>Fin</th></tr>
-                </thead>
-                <tbody>${rows}</tbody>
-            </table>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Client</th><th>Bateau</th><th>Catway</th><th>Début</th><th>Fin</th></tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
         `
 
     } catch (err) {
