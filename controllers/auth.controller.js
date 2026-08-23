@@ -1,38 +1,54 @@
-const User = require('../models/User')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const authService = require('../services/auth.service')
 
-// POST /login
-exports.login = async (req, res) => {
-
-    const { email, password } = req.body
-
-    const user = await User.findOne({ email })
-
-    if (!user) {
-        return res.status(401).json({ message: "Utilisateur incorrect" })
-    }
-
-    const validPassword = await bcrypt.compare(password, user.password)
-
-    if (!validPassword) {
-        return res.status(401).json({ message: "Mot de passe incorrect" })
-    }
-
-    const token = jwt.sign(
-        { id: user._id, email: user.email },
-        "SECRET_KEY",
-        { expiresIn: "1h" }
-    )
-
-    res.cookie("token", token)
-    res.redirect("/dashboard")
+const COOKIE_OPTIONS = {
+    httpOnly: true,
+    maxAge: 2 * 60 * 60 * 1000, // 2h, aligné sur l'expiration du token
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production'
 }
 
-// GET /logout
+/**
+ * POST /login
+ * Authentifie un utilisateur et pose un cookie JWT httpOnly.
+ * Redirige vers /dashboard si la requête vient du formulaire web,
+ * répond en JSON si elle vient d'un client API.
+ */
+exports.login = async (req, res) => {
+    const { email, password } = req.body
+    const wantsHtml = req.accepts(['html', 'json']) === 'html'
+
+    try {
+        const { token, user } = await authService.login(email, password)
+
+        res.cookie('token', token, COOKIE_OPTIONS)
+
+        if (wantsHtml) {
+            return res.redirect('/dashboard')
+        }
+
+        return res.json({ message: 'Connexion réussie', user })
+
+    } catch (error) {
+        const status = error.status || 500
+
+        if (wantsHtml) {
+            return res.redirect('/?error=' + encodeURIComponent(error.message))
+        }
+
+        return res.status(status).json({ message: error.message })
+    }
+}
+
+/**
+ * GET /logout
+ * Supprime le cookie de session et redirige vers la page d'accueil.
+ */
 exports.logout = (req, res) => {
+    res.clearCookie('token')
 
-    res.clearCookie("token")
+    if (req.accepts(['html', 'json']) === 'html') {
+        return res.redirect('/')
+    }
 
-    res.json({ message: "Déconnexion réussie" })
+    return res.json({ message: 'Déconnexion réussie' })
 }

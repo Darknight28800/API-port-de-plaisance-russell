@@ -1,93 +1,75 @@
-const Reservation = require('../models/Reservation')
+const reservationService = require('../services/reservation.service')
 
-// GET /catways/:id/reservations
-exports.getReservationsByCatway = async (req, res) => {
+/** GET /reservations — liste toutes les réservations, tous catways confondus. */
+exports.getAllReservations = async (req, res) => {
     try {
-
-        const reservations = await Reservation.find({
-            catwayNumber: req.params.id
-        })
-
+        const reservations = await reservationService.listAll()
         res.json(reservations)
-
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
 }
 
-// GET /catways/:id/reservations/:idReservation
+/** GET /catways/:id/reservations — liste les réservations d'un catway. */
+exports.getReservationsByCatway = async (req, res) => {
+    try {
+        const reservations = await reservationService.listByCatway(req.params.id)
+        res.json(reservations)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+/** GET /catways/:id/reservations/:idReservation — détails d'une réservation. */
 exports.getReservationById = async (req, res) => {
     try {
-
-        const reservation = await Reservation.findById(req.params.idReservation)
+        const reservation = await reservationService.getOne(req.params.id, req.params.idReservation)
 
         if (!reservation) {
-            return res.status(404).json({ message: "Réservation non trouvée" })
+            return res.status(404).json({ message: 'Réservation non trouvée' })
         }
 
         res.json(reservation)
-
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
 }
 
-// POST /catways/:id/reservations
+/** POST /catways/:id/reservations — crée une réservation. */
 exports.createReservation = async (req, res) => {
     try {
-
-        const newReservation = new Reservation({
-            catwayNumber: req.params.id,
-            clientName: req.body.clientName,
-            boatName: req.body.boatName,
-            startDate: req.body.startDate,
-            endDate: req.body.endDate
-        })
-
-        const savedReservation = await newReservation.save()
-
-        res.status(201).json(savedReservation)
-
+        const reservation = await reservationService.create(req.params.id, req.body)
+        res.status(201).json(reservation)
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
 }
 
-// PUT /catways/:id/reservations/:idReservation
+/** PUT /catways/:id/reservations/:idReservation — modifie une réservation. */
 exports.updateReservation = async (req, res) => {
     try {
+        const reservation = await reservationService.update(req.params.id, req.params.idReservation, req.body)
 
-        const updatedReservation = await Reservation.findByIdAndUpdate(
-            req.params.idReservation,
-            req.body,
-            { new: true }
-        )
-
-        if (!updatedReservation) {
-            return res.status(404).json({ message: "Réservation non trouvée" })
+        if (!reservation) {
+            return res.status(404).json({ message: 'Réservation non trouvée' })
         }
 
-        res.json(updatedReservation)
-
+        res.json(reservation)
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(400).json({ message: error.message })
     }
 }
 
-// DELETE /catways/:id/reservations/:idReservation
+/** DELETE /catways/:id/reservations/:idReservation — supprime une réservation. */
 exports.deleteReservation = async (req, res) => {
     try {
+        const reservation = await reservationService.remove(req.params.id, req.params.idReservation)
 
-        const deletedReservation = await Reservation.findByIdAndDelete(
-            req.params.idReservation
-        )
-
-        if (!deletedReservation) {
-            return res.status(404).json({ message: "Réservation non trouvée" })
+        if (!reservation) {
+            return res.status(404).json({ message: 'Réservation non trouvée' })
         }
 
-        res.json({ message: "Réservation supprimée" })
-
+        res.json({ message: 'Réservation supprimée' })
     } catch (error) {
         res.status(500).json({ message: error.message })
     }

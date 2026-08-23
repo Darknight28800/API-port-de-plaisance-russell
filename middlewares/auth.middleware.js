@@ -1,27 +1,31 @@
-const jwt = require('jsonwebtoken')
+const authService = require('../services/auth.service')
 
-const authMiddleware = (req, res, next) => {
-
+/**
+ * Protège une route : vérifie le token JWT stocké dans le cookie `token`.
+ * - Sur une route de page (préfixe /dashboard), redirige vers l'accueil en cas d'échec.
+ * - Sur une route de l'API, répond 401 en JSON en cas d'échec.
+ * En cas de succès, attache l'utilisateur décodé à `req.user`.
+ */
+const authenticate = (req, res, next) => {
     const token = req.cookies?.token
 
     if (!token) {
-        return res.status(401).json({ message: "Accès refusé. Token manquant." })
+        return handleUnauthenticated(req, res, 'Authentification requise.')
     }
 
     try {
-
-        const decoded = jwt.verify(token, "SECRET_KEY")
-
-        req.user = decoded
-
+        req.user = authService.verifyToken(token)
         next()
-
     } catch (error) {
-
-        return res.status(401).json({ message: "Token invalide." })
-
+        return handleUnauthenticated(req, res, 'Session invalide ou expirée.')
     }
-
 }
 
-module.exports = authMiddleware
+function handleUnauthenticated(req, res, message) {
+    if (req.originalUrl.startsWith('/dashboard')) {
+        return res.redirect('/?error=' + encodeURIComponent(message))
+    }
+    return res.status(401).json({ message })
+}
+
+module.exports = authenticate

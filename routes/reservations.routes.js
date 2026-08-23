@@ -1,24 +1,24 @@
 const express = require('express')
 const router = express.Router()
 
-const Reservation = require('../models/Reservation')
+const authenticate = require('../middlewares/auth.middleware')
+const reservationsController = require('../controllers/reservations.controller')
 
-router.get('/', async (req, res) => {
+router.use(authenticate)
 
-    try {
-
-        const reservations = await Reservation.find()
-
-        res.render('reservations/list', {
-            reservations: reservations
-        })
-
-    } catch (error) {
-
-        res.status(500).send(error.message)
-
-    }
-
-})
+/**
+ * @swagger
+ * /reservations:
+ *   get:
+ *     summary: Liste toutes les réservations, tous catways confondus
+ *     tags: [Reservations]
+ *     responses:
+ *       200:
+ *         description: Liste des réservations
+ *         content:
+ *           application/json:
+ *             schema: { type: array, items: { $ref: '#/components/schemas/Reservation' } }
+ */
+router.get('/', reservationsController.getAllReservations)
 
 module.exports = router
