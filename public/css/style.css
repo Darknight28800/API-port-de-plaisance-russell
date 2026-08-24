@@ -28,11 +28,14 @@ html { scroll-behavior: smooth; }
 body {
     font-family: 'Inter', -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     background:
-        radial-gradient(1200px 500px at 100% -10%, rgba(201, 162, 39, 0.08), transparent),
-        radial-gradient(900px 400px at -10% 0%, rgba(11, 37, 69, 0.05), transparent),
-        var(--bg);
+        radial-gradient(1100px 600px at 100% 0%, rgba(217, 185, 90, 0.16), transparent),
+        radial-gradient(900px 500px at 0% 15%, rgba(26, 65, 118, 0.35), transparent),
+        radial-gradient(1400px 900px at 50% 100%, rgba(18, 51, 98, 0.4), transparent),
+        linear-gradient(160deg, var(--navy-950) 0%, var(--navy-900) 45%, var(--navy-800) 100%);
+    background-attachment: fixed;
     color: var(--text);
     margin: 0;
+    min-height: 100vh;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -50,10 +53,10 @@ a:hover { color: var(--gold-600); }
 /* ---------- Top navigation ---------- */
 
 header.topbar {
-    background: linear-gradient(135deg, rgba(7, 22, 39, 0.72), rgba(11, 37, 69, 0.62));
-    backdrop-filter: blur(16px) saturate(160%);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
-    border-bottom: 1px solid rgba(217, 185, 90, 0.18);
+    background: linear-gradient(135deg, rgba(5, 15, 28, 0.85), rgba(11, 37, 69, 0.75));
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border-bottom: 1px solid rgba(217, 185, 90, 0.25);
     padding: 1.1rem 1.75rem;
     display: flex;
     justify-content: space-between;
@@ -99,18 +102,18 @@ nav.menu a.active { color: var(--gold-400); border-color: var(--gold-500); }
 /* ---------- Cards ---------- */
 
 .card {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.55);
     border-radius: var(--radius);
     padding: 1.75rem;
     margin-bottom: 1.75rem;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.5);
     transition: box-shadow 0.2s ease, background 0.2s ease;
 }
 
-.card:hover { box-shadow: var(--shadow-md); background: rgba(255, 255, 255, 0.72); }
+.card:hover { background: rgba(255, 255, 255, 0.62); }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .card { background: var(--surface); border-color: var(--border); }
@@ -249,8 +252,16 @@ form.inline { display: inline; }
 .btn:active { transform: translateY(0); }
 
 .btn.danger { background: linear-gradient(135deg, var(--danger), var(--danger-dark)); }
-.btn.secondary { background: #fff; color: var(--navy-900); border: 1px solid var(--border); box-shadow: none; }
-.btn.secondary:hover { border-color: var(--navy-700); filter: none; box-shadow: var(--shadow-sm); }
+
+.btn.secondary {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--navy-900);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: none;
+}
+.btn.secondary:hover { background: rgba(255, 255, 255, 0.75); filter: none; box-shadow: var(--shadow-sm); }
 
 .actions { display: flex; gap: 0.75rem; align-items: center; }
 
@@ -270,21 +281,10 @@ form.inline { display: inline; }
 /* ---------- Hero / home ---------- */
 
 .hero-band {
-    background: linear-gradient(160deg, var(--navy-950) 0%, var(--navy-800) 55%, var(--navy-700) 100%);
     color: #fff;
-    padding: 4.5rem 1.5rem 6rem;
+    padding: 4rem 1.5rem 2.5rem;
     text-align: center;
     position: relative;
-    overflow: hidden;
-}
-
-.hero-band::after {
-    content: "";
-    position: absolute;
-    inset: auto 0 -1px 0;
-    height: 60px;
-    background: var(--bg);
-    clip-path: polygon(0 100%, 100% 100%, 100% 40%, 75% 70%, 50% 40%, 25% 70%, 0 40%);
 }
 
 .hero-band .eyebrow {
@@ -317,7 +317,7 @@ form.inline { display: inline; }
 
 .login-card {
     max-width: 400px;
-    margin: -4.25rem auto 0;
+    margin: 1rem auto 0;
     position: relative;
     z-index: 2;
     background: rgba(255, 255, 255, 0.45);
