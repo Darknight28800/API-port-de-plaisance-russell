@@ -44,6 +44,7 @@
     </div>
 </div>
 
+<script src="/js/toast.js"></script>
 <script>
 document.getElementById('reservation-form').addEventListener('submit', async (event) => {
     event.preventDefault()
@@ -77,7 +78,8 @@ document.getElementById('reservation-form').addEventListener('submit', async (ev
             return
         }
 
-        window.location.href = '/dashboard/reservations'
+        showToast('Réservation créée', 'success')
+        setTimeout(() => { window.location.href = '/dashboard/reservations' }, 500)
 
     } catch (err) {
         errorBox.textContent = 'Erreur réseau.'

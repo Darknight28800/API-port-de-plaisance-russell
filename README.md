@@ -6,13 +6,16 @@ interface web (pages EJS) pour l'authentification et les opérations CRUD.
 
 ## Fonctionnalités
 
-- Authentification par JWT (cookie httpOnly)
+- Authentification par JWT (cookie httpOnly, `Secure` en production)
+- Rôles utilisateurs : **admin** (gestion des catways et des comptes) et **user** (lecture + gestion des réservations)
 - API REST privée : catways, réservations (sous-ressource des catways), utilisateurs
 - Page d'accueil publique avec formulaire de connexion et lien vers la documentation
 - Tableau de bord protégé, avec les réservations en cours chargées en asynchrone depuis l'API
-- Pages de gestion CRUD pour les catways, réservations et utilisateurs
+- Pages de gestion CRUD pour les catways, réservations et utilisateurs, avec notifications visuelles (toasts)
 - Validation des données côté serveur (unicité, formats, cohérence des dates, chevauchement de réservations)
 - Documentation interactive de l'API via Swagger UI
+- Durcissement production : en-têtes de sécurité (Helmet), limitation des tentatives de connexion
+- Suite de tests automatisés (intégration API) exécutée en CI sur chaque push
 
 ## Technologies utilisées
 
@@ -22,6 +25,8 @@ interface web (pages EJS) pour l'authentification et les opérations CRUD.
 - JWT (jsonwebtoken) + bcrypt pour l'authentification
 - express-validator pour la validation des entrées
 - swagger-jsdoc / swagger-ui-express pour la documentation de l'API
+- helmet / express-rate-limit pour la sécurité
+- node:test / supertest / mongodb-memory-server pour les tests, GitHub Actions pour la CI
 
 ## Prérequis
 
@@ -59,7 +64,19 @@ Un script importe les catways et réservations fournis (`data/catways.json`,
 npm run seed
 ```
 
-Compte créé : `admin@mail.com` / `123456`.
+Compte créé : `admin@mail.com` / `123456` (rôle **admin**).
+
+## Tests
+
+```bash
+npm test
+```
+
+Suite d'intégration (node:test + supertest) exécutée contre une base MongoDB
+en mémoire (mongodb-memory-server), sans dépendre d'une base réelle. Couvre
+l'authentification, le CRUD complet des trois ressources, la validation
+serveur et les permissions par rôle. Exécutée automatiquement en CI
+(GitHub Actions, voir `.github/workflows/ci.yml`) à chaque push/PR sur `main`.
 
 ## Lancer le projet
 
@@ -78,6 +95,21 @@ variables d'environnement `MONGO_URI` (cluster MongoDB Atlas) et `JWT_SECRET` da
 tableau de bord du service, et de lancer `npm run seed` une fois (via un shell Render
 ou en local en pointant temporairement `MONGO_URI` vers le cluster Atlas) pour peupler
 la base hébergée.
+
+## Rôles et permissions
+
+Deux rôles sont disponibles sur un compte utilisateur (`role: 'admin' | 'user'`) :
+
+| Action                                   | admin | user |
+|-------------------------------------------|:-----:|:----:|
+| Consulter catways / réservations          | ✅    | ✅   |
+| Créer / modifier / supprimer une réservation | ✅  | ✅   |
+| Créer / modifier / supprimer un catway    | ✅    | ❌ (403) |
+| Gérer les comptes utilisateurs (`/users`) | ✅    | ❌ (403) |
+
+Le rôle est encodé dans le token JWT et vérifié par le middleware
+`requireAdmin` (`middlewares/auth.middleware.js`), aussi bien sur les routes
+API que sur les pages du tableau de bord (redirection si non autorisé).
 
 ## Routes principales
 
@@ -142,11 +174,13 @@ config/                  Connexion MongoDB, configuration Swagger
 routes/                  Définition des routes (API + pages), annotations Swagger
 controllers/             Gestion des requêtes/réponses HTTP
 services/                Logique métier et accès aux données (Mongoose)
-middlewares/             Authentification JWT, validation des entrées
+middlewares/             Authentification JWT, rôles, validation des entrées, rate-limit
 models/                  Schémas Mongoose (User, Catway, Reservation)
 views/                   Templates EJS (pages publiques et tableau de bord)
-public/                  Assets statiques (CSS)
+public/                  Assets statiques (CSS, JS : notifications toast)
 data/                    Jeux de données fournis (catways.json, reservations.json)
+tests/                   Suite de tests d'intégration (node:test + supertest)
+.github/workflows/       Pipeline CI (GitHub Actions)
 seed.js                  Script d'import des données + création d'un compte de test
 ```
 

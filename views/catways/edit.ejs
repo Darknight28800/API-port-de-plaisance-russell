@@ -32,6 +32,7 @@
     </div>
 </div>
 
+<script src="/js/toast.js"></script>
 <script>
 document.getElementById('catway-form').addEventListener('submit', async (event) => {
     event.preventDefault()
@@ -55,7 +56,8 @@ document.getElementById('catway-form').addEventListener('submit', async (event) 
             return
         }
 
-        window.location.href = '/dashboard/catways'
+        showToast('Catway mis à jour', 'success')
+        setTimeout(() => { window.location.href = '/dashboard/catways' }, 500)
 
     } catch (err) {
         errorBox.textContent = 'Erreur réseau.'

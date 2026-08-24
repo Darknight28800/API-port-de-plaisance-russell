@@ -14,8 +14,6 @@
             <a href="/dashboard/reservations/create" class="btn">+ Nouvelle réservation</a>
         </div>
 
-        <div id="error" class="alert error" style="display:none;"></div>
-
         <% if (reservations.length === 0) { %>
             <p class="empty-state">🌊 Aucune réservation pour le moment.</p>
         <% } else { %>
@@ -45,6 +43,7 @@
     </div>
 </div>
 
+<script src="/js/toast.js"></script>
 <script>
 document.querySelectorAll('.btn-delete').forEach((btn) => {
     btn.addEventListener('click', async () => {
@@ -57,15 +56,14 @@ document.querySelectorAll('.btn-delete').forEach((btn) => {
             const data = await response.json()
 
             if (!response.ok) {
-                document.getElementById('error').textContent = data.message
-                document.getElementById('error').style.display = 'block'
+                showToast(data.message, 'error')
                 return
             }
 
             document.querySelector(`tr[data-id="${id}"]`).remove()
+            showToast('Réservation supprimée', 'success')
         } catch (err) {
-            document.getElementById('error').textContent = 'Erreur réseau.'
-            document.getElementById('error').style.display = 'block'
+            showToast('Erreur réseau.', 'error')
         }
     })
 })

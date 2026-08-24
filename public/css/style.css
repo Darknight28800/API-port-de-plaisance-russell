@@ -350,6 +350,66 @@ form.inline { display: inline; }
     color: var(--muted);
 }
 
+/* ---------- Toasts ---------- */
+
+#toast-container {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    max-width: min(360px, calc(100vw - 2rem));
+}
+
+.toast {
+    background: rgba(11, 37, 69, 0.82);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    color: #fff;
+    padding: 0.85rem 1.1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-left: 3px solid var(--gold-500);
+    box-shadow: var(--shadow-lg);
+    font-size: 0.88rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast-error { border-left-color: var(--danger); }
+.toast-success { border-left-color: var(--success); }
+
+/* ---------- Skeleton loading ---------- */
+
+.skeleton-row { display: flex; gap: 1rem; padding: 0.85rem 1rem; }
+.skeleton-cell {
+    height: 0.9rem;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.25) 25%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.25) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+    flex: 1;
+}
+
+@keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ---------- Entrance animation ---------- */
+
+.card { animation: card-in 0.35s ease both; }
+
+@keyframes card-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width: 640px) {
     .hero-band h1 { font-size: 2rem; }
     header.topbar { flex-direction: column; align-items: flex-start; }
