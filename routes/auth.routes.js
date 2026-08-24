@@ -4,6 +4,7 @@ const router = express.Router()
 const authController = require('../controllers/auth.controller')
 const { loginRules } = require('../middlewares/validators/auth.validator')
 const validate = require('../middlewares/validate')
+const { loginLimiter } = require('../middlewares/rateLimit')
 
 /**
  * @swagger
@@ -27,7 +28,7 @@ const validate = require('../middlewares/validate')
  *       400: { description: Données invalides }
  *       401: { description: Email ou mot de passe incorrect }
  */
-router.post('/login', loginRules, validate, authController.login)
+router.post('/login', loginLimiter, loginRules, validate, authController.login)
 
 /**
  * @swagger

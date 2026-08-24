@@ -85,7 +85,7 @@ exports.update = (catwayNumber, reservationId, data) => {
             startDate: data.startDate,
             endDate: data.endDate
         },
-        { new: true, runValidators: true }
+        { returnDocument: 'after', runValidators: true }
     )
 }
 

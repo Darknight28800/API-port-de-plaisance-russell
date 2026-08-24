@@ -1,5 +1,6 @@
 const express = require('express')
 const cookieParser = require('cookie-parser')
+const helmet = require('helmet')
 
 const catwaysRoutes = require('./routes/catways.routes')
 const reservationsRoutes = require('./routes/reservations.routes')
@@ -12,7 +13,15 @@ const swaggerSpec = require('./config/swagger')
 
 const app = express()
 
+// Nécessaire derrière le proxy de Render pour que express-rate-limit (et
+// req.ip en général) lise la vraie IP du client via X-Forwarded-For.
+app.set('trust proxy', 1)
+
 app.set('view engine', 'ejs')
+
+// En-têtes de sécurité HTTP standards. La CSP par défaut est désactivée car
+// les vues EJS et Swagger UI reposent sur des scripts/styles inline.
+app.use(helmet({ contentSecurityPolicy: false }))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))

@@ -42,7 +42,7 @@ exports.updateState = (catwayNumber, catwayState) => {
     return Catway.findOneAndUpdate(
         { catwayNumber },
         { catwayState },
-        { new: true, runValidators: true }
+        { returnDocument: 'after', runValidators: true }
     )
 }
 
