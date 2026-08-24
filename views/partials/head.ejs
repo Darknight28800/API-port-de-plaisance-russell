@@ -5,3 +5,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
+<script>
+(function () {
+    var KEY = 'pdp-theme';
+    var root = document.documentElement;
+    try {
+        if (localStorage.getItem(KEY) === 'light') root.setAttribute('data-theme', 'light');
+    } catch (e) {}
+    window.toggleTheme = function () {
+        var isLight = root.getAttribute('data-theme') === 'light';
+        if (isLight) { root.removeAttribute('data-theme'); } else { root.setAttribute('data-theme', 'light'); }
+        try { localStorage.setItem(KEY, isLight ? 'dark' : 'light'); } catch (e) {}
+    };
+})();
+</script>

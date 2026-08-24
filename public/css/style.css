@@ -28,10 +28,14 @@ html { scroll-behavior: smooth; }
 body {
     font-family: 'Inter', -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     background:
-        radial-gradient(1100px 600px at 100% 0%, rgba(198, 161, 90, 0.14), transparent),
-        radial-gradient(900px 500px at 0% 10%, rgba(27, 39, 64, 0.55), transparent),
-        radial-gradient(1400px 900px at 50% 105%, rgba(16, 24, 37, 0.6), transparent),
-        linear-gradient(160deg, var(--navy-950) 0%, var(--navy-900) 45%, var(--navy-800) 100%);
+        /* halo lumineux principal, doré, comme une source de lumière chaude au-dessus de la scène */
+        radial-gradient(900px 560px at 50% -12%, rgba(221, 192, 132, 0.28), transparent 62%),
+        /* second halo, plus discret, en écho en bas à droite */
+        radial-gradient(700px 520px at 90% 100%, rgba(198, 161, 90, 0.12), transparent 60%),
+        /* lueur froide résiduelle en bas à gauche, pour la profondeur */
+        radial-gradient(800px 600px at 5% 90%, rgba(60, 90, 140, 0.1), transparent 60%),
+        /* surface obsidienne : quasi noire, à peine teintée */
+        linear-gradient(180deg, #060810 0%, #030407 55%, #000000 100%);
     background-attachment: fixed;
     color: var(--text);
     margin: 0;
@@ -40,17 +44,43 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Grain subtil pour casser la platitude des dégradés — signature "matière" plutôt que flat design.
-   z-index négatif : reste sous le contenu normal sans avoir à repositionner quoi que ce soit d'autre. */
+/* Grain subtil pour casser la platitude des dégradés — signature "matière" plutôt que flat design. */
 body::before {
     content: "";
-    position: absolute;
+    position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    opacity: 0.05;
+    opacity: 0.045;
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Effet miroir : reflet diagonal glacé qui dérive lentement sur la surface, comme la lumière
+   glissant sur de l'obsidienne polie. z-index négatif : reste sous le contenu, ne gêne rien. */
+body::after {
+    content: "";
+    position: fixed;
+    inset: -20%;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(115deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.05) 44%,
+        rgba(221, 192, 132, 0.1) 50%,
+        rgba(255, 255, 255, 0.05) 56%,
+        transparent 70%);
+    background-size: 260% 260%;
+    animation: mirror-drift 24s ease-in-out infinite;
+}
+
+@keyframes mirror-drift {
+    0%, 100% { background-position: 10% 20%; }
+    50% { background-position: 90% 80%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body::after { animation: none; }
 }
 
 h1, h2, h3 {
@@ -74,6 +104,35 @@ a:hover { color: var(--gold-600); }
 }
 
 .icon-lg { width: 1.6em; height: 1.6em; vertical-align: -0.3em; }
+
+/* ---------- Bascule clair / sombre ---------- */
+
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    border: 1px solid rgba(244, 239, 227, 0.25);
+    background: rgba(244, 239, 227, 0.06);
+    color: rgba(244, 239, 227, 0.85);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.theme-toggle:hover { background: rgba(244, 239, 227, 0.14); border-color: var(--gold-500); color: var(--gold-400); }
+
+.theme-icon-light { display: none; }
+[data-theme="light"] .theme-icon-dark { display: none; }
+[data-theme="light"] .theme-icon-light { display: inline-flex; }
+
+.theme-toggle-floating {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 20;
+}
 
 /* ---------- Top navigation ---------- */
 
@@ -373,7 +432,7 @@ form.inline { display: inline; }
     -webkit-backdrop-filter: blur(30px) saturate(160%);
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-top: 3px solid var(--gold-500);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg), 0 0 90px rgba(221, 192, 132, 0.16);
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -468,3 +527,48 @@ form.inline { display: inline; }
     .hero-band h1 { font-size: 2.1rem; }
     header.topbar { flex-direction: column; align-items: flex-start; }
 }
+
+/* =========================================================
+   Thème clair — même identité (halo doré, effet miroir),
+   surface en ivoire poli plutôt qu'obsidienne. La barre de
+   navigation, les boutons et les en-têtes de tableau restent
+   volontairement sombres dans les deux thèmes (signature de
+   marque), seule la surface de page et les bords des cartes
+   changent.
+   ========================================================= */
+
+[data-theme="light"] body {
+    background:
+        radial-gradient(900px 560px at 50% -12%, rgba(198, 161, 90, 0.22), transparent 62%),
+        radial-gradient(700px 520px at 90% 100%, rgba(198, 161, 90, 0.12), transparent 60%),
+        radial-gradient(800px 600px at 5% 90%, rgba(120, 140, 170, 0.1), transparent 60%),
+        linear-gradient(180deg, #faf8f2 0%, #f2ebdc 55%, #eae0c9 100%);
+}
+
+[data-theme="light"] body::before { opacity: 0.03; }
+
+[data-theme="light"] body::after {
+    background: linear-gradient(115deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.55) 44%,
+        rgba(198, 161, 90, 0.16) 50%,
+        rgba(255, 255, 255, 0.55) 56%,
+        transparent 70%);
+    background-size: 260% 260%;
+}
+
+[data-theme="light"] .card,
+[data-theme="light"] .login-card {
+    background: rgba(255, 255, 255, 0.68);
+    border-color: rgba(32, 28, 22, 0.1);
+}
+
+[data-theme="light"] .card:hover { background: rgba(255, 255, 255, 0.82); }
+
+[data-theme="light"] .table-wrap { border-color: rgba(32, 28, 22, 0.1); }
+[data-theme="light"] table { background: rgba(255, 255, 255, 0.65); }
+
+[data-theme="light"] .form-group input,
+[data-theme="light"] .form-group select { background: rgba(255, 255, 255, 0.7); }
+
+[data-theme="light"] .btn.secondary { border-color: rgba(32, 28, 22, 0.18); }

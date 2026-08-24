@@ -9,5 +9,9 @@
         <% } %>
         <a href="/api-docs" target="_blank">Documentation</a>
         <a href="/logout">Déconnexion</a>
+        <button type="button" class="theme-toggle" onclick="toggleTheme()" aria-label="Changer de thème">
+            <span class="theme-icon-dark"><%- include('icon', {name: 'moon'}) %></span>
+            <span class="theme-icon-light"><%- include('icon', {name: 'sun'}) %></span>
+        </button>
     </nav>
 </header>
