@@ -35,7 +35,7 @@ body {
         /* lueur froide résiduelle en bas à gauche, pour la profondeur */
         radial-gradient(800px 600px at 5% 90%, rgba(60, 90, 140, 0.1), transparent 60%),
         /* surface obsidienne : quasi noire, à peine teintée */
-        linear-gradient(180deg, #0b1c33 0%, #071427 55%, #040c1a 100%);
+        linear-gradient(180deg, #123a8f 0%, #0a2266 55%, #050f33 100%);
     background-attachment: fixed;
     color: var(--text);
     margin: 0;
