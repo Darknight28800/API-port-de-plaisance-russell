@@ -44,11 +44,14 @@ async function seed() {
         await User.create({
             username: TEST_USER.username,
             email: TEST_USER.email,
-            password: hashedPassword
+            password: hashedPassword,
+            role: 'admin'
         })
-        console.log(`Utilisateur de test créé : ${TEST_USER.email} / ${TEST_USER.password}`)
+        console.log(`Utilisateur de test créé : ${TEST_USER.email} / ${TEST_USER.password} (admin)`)
     } else {
-        console.log(`Utilisateur de test déjà existant : ${TEST_USER.email}`)
+        existingUser.role = 'admin'
+        await existingUser.save()
+        console.log(`Utilisateur de test déjà existant : ${TEST_USER.email} (rôle admin confirmé)`)
     }
 
     await mongoose.disconnect()

@@ -14,21 +14,20 @@
             <a href="/dashboard/users/create" class="btn">+ Nouvel utilisateur</a>
         </div>
 
-        <div id="error" class="alert error" style="display:none;"></div>
-
         <% if (users.length === 0) { %>
             <p class="empty-state">👤 Aucun utilisateur pour le moment.</p>
         <% } else { %>
         <div class="table-wrap">
             <table>
                 <thead>
-                    <tr><th>Nom</th><th>Email</th><th>Actions</th></tr>
+                    <tr><th>Nom</th><th>Email</th><th>Rôle</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
                     <% users.forEach((u) => { %>
                     <tr data-email="<%= u.email %>">
                         <td><%= u.username %></td>
                         <td><%= u.email %></td>
+                        <td><span class="badge <%= u.role === 'admin' ? 'badge-long' : 'badge-short' %>"><%= u.role === 'admin' ? 'Administrateur' : 'Utilisateur' %></span></td>
                         <td class="actions">
                             <a href="/dashboard/users/<%= u.email %>/edit">Modifier</a>
                             <button class="btn danger btn-delete" data-email="<%= u.email %>">Supprimer</button>
@@ -42,6 +41,7 @@
     </div>
 </div>
 
+<script src="/js/toast.js"></script>
 <script>
 document.querySelectorAll('.btn-delete').forEach((btn) => {
     btn.addEventListener('click', async () => {
@@ -54,15 +54,14 @@ document.querySelectorAll('.btn-delete').forEach((btn) => {
             const data = await response.json()
 
             if (!response.ok) {
-                document.getElementById('error').textContent = data.message
-                document.getElementById('error').style.display = 'block'
+                showToast(data.message, 'error')
                 return
             }
 
             document.querySelector(`tr[data-email="${email}"]`).remove()
+            showToast('Utilisateur supprimé', 'success')
         } catch (err) {
-            document.getElementById('error').textContent = 'Erreur réseau.'
-            document.getElementById('error').style.display = 'block'
+            showToast('Erreur réseau.', 'error')
         }
     })
 })

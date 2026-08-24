@@ -4,7 +4,9 @@
         <a href="/dashboard" class="<%= typeof active !== 'undefined' && active === 'dashboard' ? 'active' : '' %>">Tableau de bord</a>
         <a href="/dashboard/catways" class="<%= typeof active !== 'undefined' && active === 'catways' ? 'active' : '' %>">Catways</a>
         <a href="/dashboard/reservations" class="<%= typeof active !== 'undefined' && active === 'reservations' ? 'active' : '' %>">Réservations</a>
+        <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
         <a href="/dashboard/users" class="<%= typeof active !== 'undefined' && active === 'users' ? 'active' : '' %>">Utilisateurs</a>
+        <% } %>
         <a href="/api-docs" target="_blank">Documentation</a>
         <a href="/logout">Déconnexion</a>
     </nav>

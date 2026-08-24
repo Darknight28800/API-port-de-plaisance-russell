@@ -31,7 +31,7 @@ exports.getByEmailWithPassword = (email) => {
 
 /**
  * Crée un utilisateur en hachant son mot de passe.
- * @param {{username:string, email:string, password:string}} data
+ * @param {{username:string, email:string, password:string, role?:'admin'|'user'}} data
  * @returns {Promise<Object>}
  */
 exports.create = async (data) => {
@@ -40,7 +40,8 @@ exports.create = async (data) => {
     const user = new User({
         username: data.username,
         email: data.email,
-        password: hashedPassword
+        password: hashedPassword,
+        role: data.role === 'admin' ? 'admin' : 'user'
     })
 
     await user.save()
@@ -54,7 +55,7 @@ exports.create = async (data) => {
 /**
  * Met à jour un utilisateur. Si un mot de passe est fourni, il est haché.
  * @param {string} email
- * @param {{username?:string, email?:string, password?:string}} data
+ * @param {{username?:string, email?:string, password?:string, role?:'admin'|'user'}} data
  * @returns {Promise<Object|null>}
  */
 exports.update = async (email, data) => {
@@ -63,8 +64,9 @@ exports.update = async (email, data) => {
     if (data.username !== undefined) update.username = data.username
     if (data.email !== undefined) update.email = data.email
     if (data.password) update.password = await bcrypt.hash(data.password, SALT_ROUNDS)
+    if (data.role !== undefined) update.role = data.role === 'admin' ? 'admin' : 'user'
 
-    return User.findOneAndUpdate({ email }, update, { new: true, runValidators: true }).select('-password')
+    return User.findOneAndUpdate({ email }, update, { returnDocument: 'after', runValidators: true }).select('-password')
 }
 
 /**

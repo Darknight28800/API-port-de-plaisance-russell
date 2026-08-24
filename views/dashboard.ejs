@@ -13,14 +13,17 @@
         <h2>Tableau de bord</h2>
         <div class="summary">
             <span>👤 <%= user.username %> · <%= user.email %></span>
+            <span><%= user.role === 'admin' ? '🛡️ Administrateur' : '🧑‍💼 Utilisateur' %></span>
             <span>📅 <%= date %></span>
         </div>
     </div>
 
     <div class="card">
         <h3>Réservations en cours</h3>
-        <div id="reservations-container">
-            <p class="muted">Chargement…</p>
+        <div id="reservations-container" class="table-wrap">
+            <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+            <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+            <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
         </div>
     </div>
 
@@ -35,6 +38,7 @@ async function loadCurrentReservations() {
         const response = await fetch('/reservations', { headers: { Accept: 'application/json' } })
 
         if (!response.ok) {
+            container.classList.remove('table-wrap')
             container.innerHTML = '<p class="alert error">Impossible de charger les réservations.</p>'
             return
         }
@@ -45,6 +49,7 @@ async function loadCurrentReservations() {
         const current = reservations.filter((r) => new Date(r.startDate) <= now && new Date(r.endDate) >= now)
 
         if (current.length === 0) {
+            container.classList.remove('table-wrap')
             container.innerHTML = '<p class="empty-state">⛵ Aucune réservation en cours actuellement.</p>'
             return
         }
@@ -60,17 +65,16 @@ async function loadCurrentReservations() {
         `).join('')
 
         container.innerHTML = `
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr><th>Client</th><th>Bateau</th><th>Catway</th><th>Début</th><th>Fin</th></tr>
-                    </thead>
-                    <tbody>${rows}</tbody>
-                </table>
-            </div>
+            <table>
+                <thead>
+                    <tr><th>Client</th><th>Bateau</th><th>Catway</th><th>Début</th><th>Fin</th></tr>
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>
         `
 
     } catch (err) {
+        container.classList.remove('table-wrap')
         container.innerHTML = '<p class="alert error">Erreur réseau lors du chargement des réservations.</p>'
     }
 }

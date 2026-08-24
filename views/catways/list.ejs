@@ -11,10 +11,10 @@
     <div class="card">
         <div class="actions" style="justify-content: space-between; margin-bottom: 1.25rem;">
             <h2 style="margin:0;">Catways</h2>
+            <% if (user && user.role === 'admin') { %>
             <a href="/dashboard/catways/create" class="btn">+ Nouveau catway</a>
+            <% } %>
         </div>
-
-        <div id="error" class="alert error" style="display:none;"></div>
 
         <% if (catways.length === 0) { %>
             <p class="empty-state">⚓ Aucun catway pour le moment.</p>
@@ -31,8 +31,12 @@
                         <td><span class="badge badge-<%= catway.catwayType %>"><%= catway.catwayType %></span></td>
                         <td><%= catway.catwayState %></td>
                         <td class="actions">
+                            <% if (user && user.role === 'admin') { %>
                             <a href="/dashboard/catways/<%= catway.catwayNumber %>/edit">Modifier</a>
                             <button class="btn danger btn-delete" data-number="<%= catway.catwayNumber %>">Supprimer</button>
+                            <% } else { %>
+                            <span class="muted">Lecture seule</span>
+                            <% } %>
                         </td>
                     </tr>
                     <% }) %>
@@ -43,6 +47,7 @@
     </div>
 </div>
 
+<script src="/js/toast.js"></script>
 <script>
 document.querySelectorAll('.btn-delete').forEach((btn) => {
     btn.addEventListener('click', async () => {
@@ -55,15 +60,14 @@ document.querySelectorAll('.btn-delete').forEach((btn) => {
             const data = await response.json()
 
             if (!response.ok) {
-                document.getElementById('error').textContent = data.message
-                document.getElementById('error').style.display = 'block'
+                showToast(data.message, 'error')
                 return
             }
 
             document.querySelector(`tr[data-number="${number}"]`).remove()
+            showToast('Catway supprimé', 'success')
         } catch (err) {
-            document.getElementById('error').textContent = 'Erreur réseau.'
-            document.getElementById('error').style.display = 'block'
+            showToast('Erreur réseau.', 'error')
         }
     })
 })

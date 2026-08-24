@@ -16,11 +16,18 @@
         <form id="user-form">
             <div class="form-group">
                 <label for="username">Nom d'utilisateur</label>
-                <input type="text" id="username" name="username" value="<%= user.username %>" required minlength="2">
+                <input type="text" id="username" name="username" value="<%= editedUser.username %>" required minlength="2">
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="<%= user.email %>" required>
+                <input type="email" id="email" name="email" value="<%= editedUser.email %>" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Rôle</label>
+                <select id="role" name="role" required>
+                    <option value="user" <%= editedUser.role === 'user' ? 'selected' : '' %>>Utilisateur</option>
+                    <option value="admin" <%= editedUser.role === 'admin' ? 'selected' : '' %>>Administrateur</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="password">Nouveau mot de passe <span class="muted">(laisser vide pour ne pas changer)</span></label>
@@ -32,6 +39,7 @@
     </div>
 </div>
 
+<script src="/js/toast.js"></script>
 <script>
 document.getElementById('user-form').addEventListener('submit', async (event) => {
     event.preventDefault()
@@ -41,14 +49,15 @@ document.getElementById('user-form').addEventListener('submit', async (event) =>
 
     const payload = {
         username: document.getElementById('username').value,
-        email: document.getElementById('email').value
+        email: document.getElementById('email').value,
+        role: document.getElementById('role').value
     }
 
     const password = document.getElementById('password').value
     if (password) payload.password = password
 
     try {
-        const response = await fetch('/users/<%= user.email %>', {
+        const response = await fetch('/users/<%= editedUser.email %>', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -63,7 +72,8 @@ document.getElementById('user-form').addEventListener('submit', async (event) =>
             return
         }
 
-        window.location.href = '/dashboard/users'
+        showToast('Utilisateur mis à jour', 'success')
+        setTimeout(() => { window.location.href = '/dashboard/users' }, 500)
 
     } catch (err) {
         errorBox.textContent = 'Erreur réseau.'

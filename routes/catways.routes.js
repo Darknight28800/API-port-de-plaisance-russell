@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const authenticate = require('../middlewares/auth.middleware')
+const { requireAdmin } = require('../middlewares/auth.middleware')
 const catwaysController = require('../controllers/catways.controller')
 const { createRules, updateRules } = require('../middlewares/validators/catway.validator')
 const validate = require('../middlewares/validate')
@@ -34,7 +35,7 @@ router.use(authenticate)
  *       400: { description: Données invalides }
  */
 router.get('/', catwaysController.getAllCatways)
-router.post('/', createRules, validate, catwaysController.createCatway)
+router.post('/', requireAdmin, createRules, validate, catwaysController.createCatway)
 
 /**
  * @swagger
@@ -82,8 +83,8 @@ router.post('/', createRules, validate, catwaysController.createCatway)
  *       404: { description: Catway non trouvé }
  */
 router.get('/:id', catwaysController.getCatwayById)
-router.put('/:id', updateRules, validate, catwaysController.updateCatway)
-router.delete('/:id', catwaysController.deleteCatway)
+router.put('/:id', requireAdmin, updateRules, validate, catwaysController.updateCatway)
+router.delete('/:id', requireAdmin, catwaysController.deleteCatway)
 
 router.use('/:id/reservations', catwayReservationsRoutes)
 

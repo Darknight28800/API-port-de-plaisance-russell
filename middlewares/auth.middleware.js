@@ -28,4 +28,24 @@ function handleUnauthenticated(req, res, message) {
     return res.status(401).json({ message })
 }
 
+/**
+ * Réserve une route aux utilisateurs ayant le rôle "admin". Doit être placé
+ * après `authenticate` (nécessite `req.user`). La gestion des catways et des
+ * comptes utilisateurs est réservée aux administrateurs ; les réservations
+ * restent accessibles à tout utilisateur connecté (usage quotidien de la
+ * capitainerie).
+ */
+const requireAdmin = (req, res, next) => {
+    if (req.user?.role !== 'admin') {
+        const message = "Accès réservé aux administrateurs."
+
+        if (req.originalUrl.startsWith('/dashboard')) {
+            return res.redirect('/dashboard?error=' + encodeURIComponent(message))
+        }
+        return res.status(403).json({ message })
+    }
+    next()
+}
+
 module.exports = authenticate
+module.exports.requireAdmin = requireAdmin

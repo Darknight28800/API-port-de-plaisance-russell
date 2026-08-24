@@ -26,12 +26,20 @@
                 <label for="password">Mot de passe</label>
                 <input type="password" id="password" name="password" required minlength="6">
             </div>
+            <div class="form-group">
+                <label for="role">Rôle</label>
+                <select id="role" name="role" required>
+                    <option value="user">Utilisateur</option>
+                    <option value="admin">Administrateur</option>
+                </select>
+            </div>
             <button type="submit" class="btn">Créer</button>
             <a href="/dashboard/users" class="btn secondary">Annuler</a>
         </form>
     </div>
 </div>
 
+<script src="/js/toast.js"></script>
 <script>
 document.getElementById('user-form').addEventListener('submit', async (event) => {
     event.preventDefault()
@@ -42,7 +50,8 @@ document.getElementById('user-form').addEventListener('submit', async (event) =>
     const payload = {
         username: document.getElementById('username').value,
         email: document.getElementById('email').value,
-        password: document.getElementById('password').value
+        password: document.getElementById('password').value,
+        role: document.getElementById('role').value
     }
 
     try {
@@ -61,7 +70,8 @@ document.getElementById('user-form').addEventListener('submit', async (event) =>
             return
         }
 
-        window.location.href = '/dashboard/users'
+        showToast('Utilisateur créé', 'success')
+        setTimeout(() => { window.location.href = '/dashboard/users' }, 500)
 
     } catch (err) {
         errorBox.textContent = 'Erreur réseau.'

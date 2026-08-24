@@ -2,11 +2,13 @@ const express = require('express')
 const router = express.Router()
 
 const authenticate = require('../middlewares/auth.middleware')
+const { requireAdmin } = require('../middlewares/auth.middleware')
 const usersController = require('../controllers/users.controller')
 const { createRules, updateRules } = require('../middlewares/validators/user.validator')
 const validate = require('../middlewares/validate')
 
-router.use(authenticate)
+// La gestion des comptes est réservée aux administrateurs.
+router.use(authenticate, requireAdmin)
 
 /**
  * @swagger
