@@ -11,11 +11,11 @@
     <div class="card">
         <div class="actions" style="justify-content: space-between; margin-bottom: 1.25rem;">
             <h2 style="margin:0;">Utilisateurs</h2>
-            <a href="/dashboard/users/create" class="btn">+ Nouvel utilisateur</a>
+            <a href="/dashboard/users/create" class="btn gold"><%- include('../partials/icon', {name: 'plus'}) %> Nouvel utilisateur</a>
         </div>
 
         <% if (users.length === 0) { %>
-            <p class="empty-state">👤 Aucun utilisateur pour le moment.</p>
+            <p class="empty-state"><%- include('../partials/icon', {name: 'user', cls: 'icon-lg'}) %> Aucun utilisateur pour le moment.</p>
         <% } else { %>
         <div class="table-wrap">
             <table>
@@ -29,8 +29,8 @@
                         <td><%= u.email %></td>
                         <td><span class="badge <%= u.role === 'admin' ? 'badge-long' : 'badge-short' %>"><%= u.role === 'admin' ? 'Administrateur' : 'Utilisateur' %></span></td>
                         <td class="actions">
-                            <a href="/dashboard/users/<%= u.email %>/edit">Modifier</a>
-                            <button class="btn danger btn-delete" data-email="<%= u.email %>">Supprimer</button>
+                            <a href="/dashboard/users/<%= u.email %>/edit"><%- include('../partials/icon', {name: 'pencil'}) %> Modifier</a>
+                            <button class="btn danger btn-delete" data-email="<%= u.email %>"><%- include('../partials/icon', {name: 'trash'}) %> Supprimer</button>
                         </td>
                     </tr>
                     <% }) %>

@@ -1,5 +1,5 @@
 <header class="topbar">
-    <h1>⚓ <span class="brand-accent">Port de Plaisance</span> Russell</h1>
+    <h1><%- include('icon', {name: 'anchor'}) %> <span class="brand-accent">Port de Plaisance</span> Russell</h1>
     <nav class="menu">
         <a href="/dashboard" class="<%= typeof active !== 'undefined' && active === 'dashboard' ? 'active' : '' %>">Tableau de bord</a>
         <a href="/dashboard/catways" class="<%= typeof active !== 'undefined' && active === 'catways' ? 'active' : '' %>">Catways</a>

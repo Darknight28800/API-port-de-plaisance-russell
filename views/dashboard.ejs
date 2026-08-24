@@ -12,9 +12,9 @@
     <div class="card">
         <h2>Tableau de bord</h2>
         <div class="summary">
-            <span>👤 <%= user.username %> · <%= user.email %></span>
-            <span><%= user.role === 'admin' ? '🛡️ Administrateur' : '🧑‍💼 Utilisateur' %></span>
-            <span>📅 <%= date %></span>
+            <span><%- include('partials/icon', {name: 'user'}) %> <%= user.username %> · <%= user.email %></span>
+            <span><%- include('partials/icon', {name: 'shield'}) %> <%= user.role === 'admin' ? 'Administrateur' : 'Utilisateur' %></span>
+            <span><%- include('partials/icon', {name: 'calendar'}) %> <%= date %></span>
         </div>
     </div>
 
@@ -50,7 +50,7 @@ async function loadCurrentReservations() {
 
         if (current.length === 0) {
             container.classList.remove('table-wrap')
-            container.innerHTML = '<p class="empty-state">⛵ Aucune réservation en cours actuellement.</p>'
+            container.innerHTML = '<p class="empty-state"><svg class="icon icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16"></path><path d="M6 18l1-9 7 5-8 4z"></path><path d="M12 4v9"></path></svg>Aucune réservation en cours actuellement.</p>'
             return
         }
 

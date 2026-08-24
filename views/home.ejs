@@ -8,7 +8,7 @@
 <div class="hero-band">
     <div class="hero-wrap">
         <span class="eyebrow">Capitainerie · Gestion privée</span>
-        <h1>⚓ <span class="brand-accent">Port de Plaisance</span> Russell</h1>
+        <h1><%- include('partials/icon', {name: 'anchor', cls: 'icon-lg'}) %> <span class="brand-accent">Port de Plaisance</span> Russell</h1>
         <p>
             Suivi des catways, des réservations et des comptes de la capitainerie
             dans une interface unique, sécurisée et pensée pour la mer.
@@ -38,7 +38,7 @@
             <button type="submit" class="btn" style="width:100%; justify-content:center;">Se connecter</button>
         </form>
 
-        <a href="/api-docs" target="_blank" class="doc-link">Consulter la documentation de l'API →</a>
+        <a href="/api-docs" target="_blank" class="doc-link"><%- include('partials/icon', {name: 'doc'}) %> Consulter la documentation de l'API</a>
     </div>
 
 </div>

@@ -11,11 +11,11 @@
     <div class="card">
         <div class="actions" style="justify-content: space-between; margin-bottom: 1.25rem;">
             <h2 style="margin:0;">Réservations</h2>
-            <a href="/dashboard/reservations/create" class="btn">+ Nouvelle réservation</a>
+            <a href="/dashboard/reservations/create" class="btn gold"><%- include('../partials/icon', {name: 'plus'}) %> Nouvelle réservation</a>
         </div>
 
         <% if (reservations.length === 0) { %>
-            <p class="empty-state">🌊 Aucune réservation pour le moment.</p>
+            <p class="empty-state"><%- include('../partials/icon', {name: 'wave', cls: 'icon-lg'}) %> Aucune réservation pour le moment.</p>
         <% } else { %>
         <div class="table-wrap">
             <table>
@@ -31,8 +31,8 @@
                         <td><%= new Date(r.startDate).toLocaleDateString('fr-FR') %></td>
                         <td><%= new Date(r.endDate).toLocaleDateString('fr-FR') %></td>
                         <td class="actions">
-                            <a href="/dashboard/reservations/<%= r.catwayNumber %>/<%= r._id %>/edit">Modifier</a>
-                            <button class="btn danger btn-delete" data-catway="<%= r.catwayNumber %>" data-id="<%= r._id %>">Supprimer</button>
+                            <a href="/dashboard/reservations/<%= r.catwayNumber %>/<%= r._id %>/edit"><%- include('../partials/icon', {name: 'pencil'}) %> Modifier</a>
+                            <button class="btn danger btn-delete" data-catway="<%= r.catwayNumber %>" data-id="<%= r._id %>"><%- include('../partials/icon', {name: 'trash'}) %> Supprimer</button>
                         </td>
                     </tr>
                     <% }) %>

@@ -12,12 +12,12 @@
         <div class="actions" style="justify-content: space-between; margin-bottom: 1.25rem;">
             <h2 style="margin:0;">Catways</h2>
             <% if (user && user.role === 'admin') { %>
-            <a href="/dashboard/catways/create" class="btn">+ Nouveau catway</a>
+            <a href="/dashboard/catways/create" class="btn gold"><%- include('../partials/icon', {name: 'plus'}) %> Nouveau catway</a>
             <% } %>
         </div>
 
         <% if (catways.length === 0) { %>
-            <p class="empty-state">⚓ Aucun catway pour le moment.</p>
+            <p class="empty-state"><%- include('../partials/icon', {name: 'anchor', cls: 'icon-lg'}) %> Aucun catway pour le moment.</p>
         <% } else { %>
         <div class="table-wrap">
             <table>
@@ -32,8 +32,8 @@
                         <td><%= catway.catwayState %></td>
                         <td class="actions">
                             <% if (user && user.role === 'admin') { %>
-                            <a href="/dashboard/catways/<%= catway.catwayNumber %>/edit">Modifier</a>
-                            <button class="btn danger btn-delete" data-number="<%= catway.catwayNumber %>">Supprimer</button>
+                            <a href="/dashboard/catways/<%= catway.catwayNumber %>/edit"><%- include('../partials/icon', {name: 'pencil'}) %> Modifier</a>
+                            <button class="btn danger btn-delete" data-number="<%= catway.catwayNumber %>"><%- include('../partials/icon', {name: 'trash'}) %> Supprimer</button>
                             <% } else { %>
                             <span class="muted">Lecture seule</span>
                             <% } %>
